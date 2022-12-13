@@ -1,0 +1,57 @@
+include "lull/lull_common.fbs";
+
+namespace lull;
+
+/// A box described by its half-dimensions.
+table PhysicsBoxShape {
+  /// The positive XYZ dimensions of the shape will be mirrored in negative XYZ.
+  /// To get an asymmetric box shape, use the PhysicsShapePart translation
+  /// field to offset a symmetric box shape by the appropriate amount.
+  half_dimensions: Vec3 (native_default:"{0.5f, 0.5f, 0.5f}");
+}
+
+/// A sphere described by its radius. A sphere with non-uniform scale will
+/// result in an ellipsoid.
+table PhysicsSphereShape {
+  /// The radius of the sphere.
+  radius: float = 0.5;
+}
+
+/// An infinite plane that is solid on one side and described by its normal and
+/// the distance to the origin along said normal. This shape should only be used
+/// on Static rigid bodies.
+/// The normal and distance will be affected by the rotation and translation of
+/// the Entity. For example, a plane with normal (0, 0, 1) and distance 0 on an
+/// Entity with rotation (-90, 0, 0) and position (0, -5, 0) will act like a
+/// floor plane at -5, meaning a plane with normal (0, 1, 0) and distance -5.
+table PhysicsStaticPlaneShape {
+  /// The normal vector for the plane.
+  normal: Vec3 (native_default:"{0.0f, 1.0f, 0.0f}");
+  /// The distance from the origin of the plane along the normal vector
+  distance: float = 0.0;
+}
+
+/// A mesh shape. Loads the mesh data from a ModelAssetDef on the same entity.
+table PhysicsMeshShape {
+}
+
+/// Defines the types of primitive shapes that the simulation supports.
+union PhysicsShapePrimitive {
+  PhysicsBoxShape,
+  PhysicsSphereShape,
+  PhysicsStaticPlaneShape,
+  PhysicsMeshShape,
+}
+
+/// Wraps a primitive collision shape and a transformation to apply to it. The
+/// local transforms are used to offset shapes from the Entity's position.
+table PhysicsShapePart {
+  /// The collision shape.
+  shape: PhysicsShapePrimitive;
+  /// The local translation for this shape's centroid.
+  translation: Vec3 (defaults_to_null);
+  /// The local rotation for this shape's centroid.
+  rotation: Vec3 (defaults_to_null);
+  /// The local scale for this shape.
+  scale: Vec3 (defaults_to_null);
+}

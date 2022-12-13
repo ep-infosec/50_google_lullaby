@@ -1,0 +1,14 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "stb",
+    srcs = glob([
+        "*.c",
+        "deprecated/*.c"
+    ]),
+    hdrs = glob(["*.h"]),
+    includes = [".", ".."],
+    copts = ["-Wno-unused-value"],
+)

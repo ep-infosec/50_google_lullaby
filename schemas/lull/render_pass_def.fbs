@@ -1,0 +1,24 @@
+include "lull/lull_common.fbs";
+include "lull/render_state_def.fbs";
+include "lull/sort_mode.fbs";
+
+namespace lull;
+
+// Properties of a render pass object. Render passes contain entities to be
+// renderered.
+table RenderPassDef {
+  // Name of the render pass.
+  name: string;
+
+  // Default render state to be used when materials do not define an explicit
+  // state.
+  render_state: RenderState;
+
+  // Sort mode to be used for determining the order in which to render objects
+  // contained within this pass.
+  sort_mode: SortMode = None;
+
+  // Name of render target to be used when rendering this pass. Not specifying a
+  // target will draw directly to the display.
+  render_target_ref: string;
+}

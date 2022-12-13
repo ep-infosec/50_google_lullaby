@@ -1,0 +1,9 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "vectorial",
+    includes = ["include"],
+    textual_hdrs = glob(["include/vectorial/*.h"]),
+)

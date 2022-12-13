@@ -1,0 +1,18 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "libunibreak",
+    srcs = glob([
+        "src/*.c"
+    ], exclude = [
+        "src/filter_dup.c",
+    ]),
+    hdrs = glob([
+        "src/*.h",
+        "src/wordbreakdata.c",
+    ]),
+    includes = ["src"],
+    copts = ["-Wno-unused-variable"],
+)

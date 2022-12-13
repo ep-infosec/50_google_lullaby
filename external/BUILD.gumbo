@@ -1,0 +1,10 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "gumbo",
+    srcs = glob(["src/*.c"]),
+    hdrs = glob(["src/*.h"]),
+    copts = ["-std=c99"],
+)

@@ -1,0 +1,88 @@
+include "lull/lull_common.fbs";
+
+namespace lull;
+
+
+enum DeformMode : int {
+  None,
+  // Here for backwards compatibility.  If introducing a new DeformMode, it's
+  // safe to replace this with a new option - CylinderBend just needs to stay as
+  // '2' since it's the default for DeformerDef's deform_mode.
+  Deprecated,
+  /// Objects will be bent based on their x and z distance from 0,0,0 in the
+  /// Deformer's space.  The bend will be calculated as a cylinder wrap, with
+  /// the cylinder centered at (0,0,horizontal_radius) in the Deformer's space.
+  CylinderBend,
+  /// Objects will be bent based on a set of input and output points.
+  Waypoint,
+}
+
+/// Any object that is being deformed by some other object up the stack will
+/// need this def.  When *DeformedDef* is specified, the entity applies the
+/// DeformerDef settings used by its parent.  If its parent doesn't have a
+/// DeformedDef or a DeformerDef, it will not deform.
+table DeformedDef {
+  /// Used in the waypoint deformation mode to select which waypoint path that
+  /// should apply to this deformed entity.
+  waypoint_path_id: string;
+}
+
+/// Uses the DeformSystem to apply a deformation to the entity. See
+/// deform_system.h for details.
+table DeformerDef {
+  /// Which type of deformation to apply.
+  deform_mode: DeformMode = CylinderBend;
+
+  /// The following 2 properties only apply to CylinderBend deform mode.
+  /// The radius of the cylinder to deform around (centered on the user).
+  horizontal_radius: float;
+  /// The angle at which a deformation around the Deformer will be clamped. This
+  /// is equivalent to clamping a deformed entity's x position in the range
+  /// [-clamp_angle * radius, clamp_angle * radius]. Negative values or 0.0 will
+  /// indicate no clamping.
+  clamp_angle: float = 0.0;
+
+  /// The paths along which the Waypoint deformation mode will deform entities.
+  waypoint_paths: [WaypointPath];
+}
+
+table WaypointPath {
+  /// Optional identifier for this path. If specified this path will only apply
+  /// to Deformed entities with the matching path_id.
+  path_id: string;
+  /// A list of nodes for mapping original positions and rotations to their new
+  /// deformations. The list should be internally ordered by the axis of
+  /// interest of the original_position node.
+  waypoints: [Waypoint];
+  /// By default, this is false and we match the waypoints with the Deformed's
+  /// entity's position.
+  /// If this is true, match with a point within the Deformed's aabb instead.
+  use_aabb_anchor: bool = false;
+}
+
+table Waypoint {
+  /// The xyz position in space used as the original reference point to
+  /// to match against in Waypoint deformations. Should be local to the
+  /// deformer's coordinate system.
+  original_position: Vec3;
+  /// The xyz position in space used as the new position in space in
+  /// Waypoint deformations.
+  remapped_position: Vec3;
+  /// The Euler angle used as the new mapping in Waypoint deformations.
+  remapped_rotation: Vec3;
+  /// The new scale in Waypoint deformations. Optional, defaults to 1.
+  remapped_scale: Vec3 (native_default:"{1.f, 1.f, 1.f}");
+
+  /// Normalized coordinates representing a point in the Deformed's aabb that
+  /// will match with |original_position|. (0,0,0) is the left, bottom, far
+  /// corner, and (1,1,1) is the right, top, near corner.
+  /// Ignored if |use_aabb_anchor| is false.
+  original_aabb_anchor: Vec3;
+  /// Normalized coordinates representing a point in the Deformed's aabb that
+  /// will match with |remapped_position|. (0,0,0) is the left, bottom, far
+  /// corner, and (1,1,1) is the right, top, near corner.
+  /// Ignored if |use_aabb_anchor| is false
+  remapped_aabb_anchor: Vec3;
+}
+
+root_type DeformerDef;

@@ -1,0 +1,6 @@
+// Unfortunately, in some situations, this file conflicts with the common.fbs
+// in fplbase.  This is because the flatbuffer codegen does not use full path.
+// In such situations, you want to explicitly depend on lull_common.fbs and not
+// common.fbs.
+include "lull/lull_common.fbs";
+

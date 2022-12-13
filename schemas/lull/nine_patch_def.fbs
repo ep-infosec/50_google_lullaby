@@ -1,0 +1,42 @@
+include "lull/lull_common.fbs";
+
+namespace lull;
+
+table NinePatchDef {
+  // The size of the area the nine patch will expand to fill (in meters).
+  // The slices will always fit within |size|. If the calculated slice
+  // width from original_size is larger it will be scaled down to fit.
+  size: Vec2;
+
+  // TODO factor asset specific data out of this def
+  // The texture space width (0 - 1) of the left slice
+  left_slice: float;
+
+  // The texture space width (0 - 1) of the right slice
+  right_slice: float;
+
+  // The texture space width (0 - 1) of the bottom slice
+  bottom_slice: float;
+
+  // The texture space width (0 - 1) of the top slice
+  top_slice: float;
+
+  // The size of the unstretched nine patch (in meters).  The ratio between
+  // this original_size and the size above combined with the slice widths
+  // will determine how the slices are placed, and how large the unstretched
+  // portions of the nine patch appear in the 3D world.
+  original_size: Vec2;
+
+  // (Optional) The number of horizontal and vertical subdivisions in the
+  // nine patch mesh.  This is provided to allow for smooth looking deformation.
+  subdivisions:  Vec2i (defaults_to_null);
+
+  // Nine patch also sets the alternate uv1 coordinates scaled evenly from |min|
+  // to |max| (ignoring the slices), accessible in the shader as texCoordAlt.
+  // Here we treat |min| as bottom left with default (0,0) and |max| as top
+  // right with default (1,1) to match lullaby coordinates for convenience.
+  // The v1 coordinate is remapped in the shader with 0 as the default top and 1
+  // as the default bottom.
+  texture_alt_min: Vec2 (native_default:"{0.f, 0.f}");
+  texture_alt_max: Vec2 (native_default:"{1.f, 1.f}");
+}

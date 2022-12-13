@@ -1,0 +1,15 @@
+#ifndef LULLABY_DATA_SHADERS_COMPATIBILITY_GLSLH_
+#define LULLABY_DATA_SHADERS_COMPATIBILITY_GLSLH_
+
+/// These macros allow the old-style texture syntax to be used in GL ES 3.0.
+
+#include "lullaby/data/shaders/common.glslh"
+
+#if __VERSION__ >= GLES_ELSE(300, 330)
+// Binds old syntax to new ES 3.0 syntax.
+#define texture2DLod(_sampler, _uv, _lod) textureLod(_sampler, _uv, _lod)
+#define textureCubeLod(_sampler, _uv, _lod) textureLod(_sampler, _uv, _lod)
+#define texture2DExternal(_sampler, _uv) texture(_sampler, _uv)
+#endif  // __VERSION__ >= GLES_ELSE(300, 330)
+
+#endif  // LULLABY_DATA_SHADERS_COMPATIBILITY_GLSLH_
